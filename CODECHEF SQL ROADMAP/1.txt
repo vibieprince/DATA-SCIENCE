@@ -1,0 +1,8 @@
+**1. Till how many levels ( maximum ) can we nest Aggregate functions ?**
+
+
+Correct Answer:
+
+Nesting Not Possible
+Explanation:
+Direct nesting of aggregate functions (like writing AVG(SUM(column))) isn’t allowed in SQL. Instead, you use subqueries or CTEs to achieve nested aggregation, and the depth is only limited by your database’s query nesting or recursion limits, which are typically very high and implementation-dependent.

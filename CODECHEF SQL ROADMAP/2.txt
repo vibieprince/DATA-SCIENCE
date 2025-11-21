@@ -1,0 +1,7 @@
+**Choose the Output of following query ?
+select MIN(college) from Users;**
+
+Correct Answer:
+
+Caltech
+MIN treats the varchar values as strings and finds the minimum value by comparing their characters from left to right ( lexicographical order ).
