@@ -353,6 +353,27 @@
     ::-webkit-scrollbar-track {
       background: rgba(15, 23, 42, 0.95);
     }
+
+    .learning-item {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .learning-item h4 {
+      margin: 0 0 5px;
+      font-size: 14px;
+    }
+
+    .learning-meta {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
   </style>
 </head>
 <body>
@@ -546,6 +567,17 @@
         </div>
       </section>
     </main>
+    <!-- LEARNING LOGS SECTION -->
+    <div class="card" id="public-learning-log">
+      <div class="card-header">
+        <h2>🧠 Learning Journey</h2>
+        <span class="label">Recent topics and progress</span>
+      </div>
+
+      <div id="learning-log-list" style="display:flex;flex-direction:column;gap:12px;">
+        <p style="color:#9ca3af;font-size:13px;">Loading learning logs...</p>
+      </div>
+    </div>
   </div>
 
   <!-- Firebase (Compat SDK for simplicity) -->
@@ -750,6 +782,37 @@
           <span>${INTERVIEW_LABELS[k]}</span>
         `;
         listEl.appendChild(div);
+      });
+    });
+
+    // ===== LOAD LEARNING LOGS FOR PUBLIC VIEW =====
+    const learningLogList = document.getElementById('learning-log-list');
+
+    db.ref('learningLogs').limitToLast(6).on('value', snap => {
+      const logs = snap.val();
+
+      if (!logs) {
+        learningLogList.innerHTML = '<p style="color:#9ca3af;font-size:13px;">No learning logs added yet.</p>';
+        return;
+      }
+
+      // Convert to array & reverse (latest first)
+      const logArray = Object.values(logs).reverse();
+
+      learningLogList.innerHTML = '';
+
+      logArray.forEach(log => {
+        const div = document.createElement('div');
+        div.className = 'learning-item';
+
+        div.innerHTML = `
+          <h4>${log.topic}</h4>
+          <div class="learning-meta">📅 ${log.date || ''}</div>
+          <p><strong>Learned:</strong> ${log.what || '-'}</p>
+          <p><strong>Next:</strong> ${log.next || '-'}</p>
+        `;
+
+        learningLogList.appendChild(div);
       });
     });
   </script>
