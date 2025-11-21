@@ -569,13 +569,27 @@
     </main>
     <!-- LEARNING LOGS SECTION -->
     <div class="card" id="public-learning-log">
-      <div class="card-header">
-        <h2>🧠 Learning Journey</h2>
-        <span class="label">Recent topics and progress</span>
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <h2>🧠 Learning Journey</h2>
+          <span class="label">Recent topics and progress</span>
+        </div>
+        <button id="toggle-learning" class="btn-secondary" style="font-size:12px;">Collapse</button>
       </div>
 
-      <div id="learning-log-list" style="display:flex;flex-direction:column;gap:12px;">
-        <p style="color:#9ca3af;font-size:13px;">Loading learning logs...</p>
+      <div id="learning-controls" style="display:flex;gap:10px;margin-bottom:10px;">
+        <select id="learning-filter">
+          <option value="all">All Time</option>
+          <option value="7">Last 7 Days</option>
+          <option value="30">Last 1 Month</option>
+          <option value="60">Last 2 Months</option>
+        </select>
+      </div>
+
+      <div id="learning-log-wrapper">
+        <div id="learning-log-list" style="display:flex;flex-direction:column;gap:12px;">
+          <p style="color:#9ca3af;font-size:13px;">Loading learning logs...</p>
+        </div>
       </div>
     </div>
   </div>
@@ -787,21 +801,32 @@
 
     // ===== LOAD LEARNING LOGS FOR PUBLIC VIEW =====
     const learningLogList = document.getElementById('learning-log-list');
+    const learningFilter = document.getElementById('learning-filter');
 
-    db.ref('learningLogs').limitToLast(6).on('value', snap => {
-      const logs = snap.val();
+    let allLogs = [];
 
-      if (!logs) {
+    function renderLearningLogs(filterDays = 'all') {
+      if (!allLogs.length) {
         learningLogList.innerHTML = '<p style="color:#9ca3af;font-size:13px;">No learning logs added yet.</p>';
         return;
       }
 
-      // Convert to array & reverse (latest first)
-      const logArray = Object.values(logs).reverse();
+      const now = new Date();
+      let filtered = allLogs;
+
+      if (filterDays !== 'all') {
+        const days = parseInt(filterDays);
+        filtered = allLogs.filter(log => {
+          if (!log.date) return false;
+          const logDate = new Date(log.date);
+          const diffDays = (now - logDate) / (1000 * 60 * 60 * 24);
+          return diffDays <= days;
+        });
+      }
 
       learningLogList.innerHTML = '';
 
-      logArray.forEach(log => {
+      filtered.forEach(log => {
         const div = document.createElement('div');
         div.className = 'learning-item';
 
@@ -814,7 +839,39 @@
 
         learningLogList.appendChild(div);
       });
+
+      if (!filtered.length) {
+        learningLogList.innerHTML = '<p style="color:#9ca3af;font-size:13px;">No logs found for selected range.</p>';
+      }
+    }
+
+    // Load logs from Firebase
+    db.ref('learningLogs').on('value', snap => {
+      const logs = snap.val();
+      allLogs = logs ? Object.values(logs).reverse() : [];
+      renderLearningLogs(learningFilter.value);
     });
+
+    // Filter change event
+    learningFilter.addEventListener('change', e => {
+      renderLearningLogs(e.target.value);
+    });
+
+
+    // COLLAPSE / EXPAND
+    const toggleBtn = document.getElementById('toggle-learning');
+    const logWrapper = document.getElementById('learning-log-wrapper');
+
+    toggleBtn.addEventListener('click', () => {
+      if (logWrapper.style.display === 'none') {
+        logWrapper.style.display = 'block';
+        toggleBtn.textContent = 'Collapse';
+      } else {
+        logWrapper.style.display = 'none';
+        toggleBtn.textContent = 'Expand';
+      }
+    });
+
   </script>
 </body>
 </html>
