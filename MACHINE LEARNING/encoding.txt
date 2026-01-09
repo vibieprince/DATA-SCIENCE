@@ -1,0 +1,19 @@
+Car Brand - BMW,Audi,Toyota
+Fuel Type - Petrol, Diesel, CNG
+
+BMW? Petrol?
+
+Linear Regression
+KNNs
+Decision Trees.
+Can't work with text, only numbers
+
+So encoding will convert 
+BMW - 0
+Tesla - 1
+Audi - 2
+
+OR 
+BMW - [1,0,0]
+Audi - [0,1,0]
+Tesla - [0,0,1]

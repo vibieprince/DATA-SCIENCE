@@ -1,0 +1,9 @@
+Supervised Learning : Ideal for the tasks labelled data where the desired output is known.
+(Teacher student example)
+
+Unsupervised Learning : Suitable for identifying patterns in unlabelled data without explicit guidance.
+(marketing,Fraud detection) (birthday part example)
+
+Reinforcement Learning : Best for training agents to make decisions thorugh interaction with an environment.
+(self driving car) (trial and error) (machine learns by getting rewards or penalties)
+

@@ -1,0 +1,9 @@
+Model Evalautaion Metrices
+
+Sklearn Metrices - Master the use of 'sklearnmetrices' for comprehensive model evaluation 
+
+Regression Metrices - Learn to evaluate models using MAE,MSE and RMSe
+
+Confusion Matrix - Understand how to use a confusion matrix to analyse model performance
+
+Classification Metrcies - Learn to evaluate classification models using accuracy, precision,recall, and f1-score

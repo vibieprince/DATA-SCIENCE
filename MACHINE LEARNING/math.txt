@@ -1,0 +1,53 @@
+60, 70, 80, 85, 90, 100, 100
+7 students
+
+overall average?
+middle student?
+score appered?
+
+mean = (x1 + x2 + .....+ xn)/n
+median = middle value(if odd count),even middle 2 average
+mode = most repeated value 
+
+--------
+q1 = score = 10,20,30
+mean 
+add = 10 + 20 + 30 = 60
+count = 3 
+mean = add/3
+
+median = 30 
+
+mode = all values unique, no mode 
+50,70,70,90,45,76,99,88
+mean = 588/8 = 73.5
+median = 45 50 70 70 76 88 90 99 
+mode = 70
+
+actual value y_true = what really happened
+predicted valye y_pred = what our model thinks will happen.
+
+Usage -- Analysing errors
+
+----------
+Percentage
+60 run, 100 balls
+60 : 100 ratio
+60% strike rate 
+
+%ratio
+
+Acuuracy = (Correlated predictions/Total predictions) * 100
+Precision = (True Positives/Total predictive Positives)
+Recall = (True Positives/Total actual Positives)
+
+Percentage - out of 100 how much happens
+ration - comparison
+
+total = 100
+correct = 90
+wrong = 10
+accuracy = 90/100*100 --> 90%
+
+15 actual
+precision = 15/20 = 0.75 ---> 75%
