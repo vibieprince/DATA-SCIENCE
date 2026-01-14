@@ -96,5 +96,48 @@ def create_patient(patient: Patient):
 
     return JSONResponse(status_code=201,content={'message':'patient created successfully'})
 
-# @app.put('/edit/{patient_id}')
-# def update_patient(patient_id:str,patient_update: PatientUpdate):
+@app.put('/edit/{patient_id}')
+def update_patient(patient_id:str,patient_update: PatientUpdate):
+    data = load_data()
+    if patient_id not in data:
+        raise HTTPException(status_code=404,detail='Patient does not exitst')
+    
+    existing_patient_info = data[patient_id]
+
+    updated_patient_info = patient_update.model_dump(exclude_unset=True)  # sirf wahi ayeaga jisko update karna hai
+
+    for key,value in updated_patient_info.items():
+        existing_patient_info[key] = value
+    
+    # lekin yahan dikkat hai because of weight being changed bmi and verdict bhi change hona tha but hoga nhi
+
+    # too isliye we will do 
+    existing_patient_info['id'] = patient_id # humne id field isliye dala kyunki bina uske niche ban raha object error dega
+    patient_pydantic_obj = Patient(**existing_patient_info)
+
+    patient_pydantic_obj.model_dump(exclude='id')
+
+    # add this dict to data
+    data[patient_id] = existing_patient_info
+
+    # save data
+    save_data(data)
+
+    return JSONResponse(status_code=200,content={'message':'Patient details updated successfully!'})
+
+@app.delete('/delete/{patient_id}')
+def delete_patient(patient_id:str):
+
+    #load
+    data = load_data()
+
+    # check
+    if patient_id not in data:
+        raise HTTPException(status_code=404,detail='Patient not found')
+    
+    # delete
+    del data[patient_id]
+
+    save_data(data)
+
+    return JSONResponse(status_code=200,content='Patient Deleted')
