@@ -35,7 +35,7 @@ if st.button("Predict Premium Category"):
         if response.status_code == 200:
             result = response.json()
             st.write(result)
-            st.success(f"Predicted Insurance Premium Category : ** {result['predicted_category']}**")
+            st.success(f"Predicted Insurance Premium Category : ** {result['response']}**")
         else:
             st.error(f"API Error: {response.status_code}-{response.text}")
     except requests.exceptions.ConnectionError:
