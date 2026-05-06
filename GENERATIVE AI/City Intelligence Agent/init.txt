@@ -1,0 +1,13 @@
+We are going to create a city intelligence agent and we need some tools for that
+1. Weather Tool 
+API : OpenWeatherMap
+Purpose : Get real time weather data 
+Why it's needed:
+LLM does NOT know live weather --> needs external tool 
+
+
+2. News Tool 
+API : Travily 
+Purpose: Get latest news about a city 
+Why its needed?
+LLM does NOT know current events --> needs search
