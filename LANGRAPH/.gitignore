@@ -3,3 +3,4 @@
 main.py
 pyproject.toml
 .env
+__pycache__
