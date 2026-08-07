@@ -18,6 +18,27 @@ def chat_node(state: ChatState):
     response = llm.invoke(messages)
     return {"messages": [response]}
 
+def generate_title(user_input):
+
+    prompt = f"""
+    Generate a short title for this conversation.
+
+    Rules:
+    - Maximum 5 words
+    - No quotes
+    - No punctuation at the end
+    - Make it descriptive
+    - Return only the title
+
+    User message:
+    {user_input}
+    """
+
+    response = llm.invoke(prompt)
+
+    return response.content.strip()
+
+
 # Checkpointer
 checkpointer = InMemorySaver()
 
