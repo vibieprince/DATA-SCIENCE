@@ -1,13 +1,14 @@
 import streamlit as st
 from langgraph_database_backend import (
-    chatbot,
     retrieve_all_threads,
     create_thread,
     generate_title,
     update_thread_title
 )
+from langgraph_tool_backend import chatbot
 from langchain_core.messages import HumanMessage
 import uuid
+from langchain_core.messages import AIMessageChunk
 
 
 # =============================================================================
@@ -304,28 +305,74 @@ if user_input:
 
     with st.chat_message('assistant'):
 
-        ai_message = st.write_stream(
+        with st.status("🤔 Thinking...", expanded=True) as status:
 
-            message_chunk.content
+            def stream_ai_response():
 
-            for message_chunk, metadata
+                current_node = None
 
-            in chatbot.stream(
+                for message_chunk, metadata in chatbot.stream(
+                    {
+                        'messages': [
+                            HumanMessage(content=user_input)
+                        ]
+                    },
+                    config=CONFIG,
+                    stream_mode='messages'
+                ):
 
-                {
-                    'messages': [
-                        HumanMessage(
-                            content=user_input
-                        )
-                    ]
-                },
+                    # ---------------------------------------------------------
+                    # Show current LangGraph node/tool in status
+                    # ---------------------------------------------------------
+                    node_name = metadata.get("langgraph_node")
 
-                config=CONFIG,
+                    if node_name and node_name != current_node:
+                        current_node = node_name
 
-                stream_mode='messages'
+                        if node_name != "chatbot":
+                            status.update(
+                                label=f"🔧 Using {node_name}...",
+                                state="running"
+                            )
+
+                    # ---------------------------------------------------------
+                    # ONLY stream actual AI text
+                    # ---------------------------------------------------------
+                    if not isinstance(message_chunk, AIMessageChunk):
+                        continue
+
+                    content = message_chunk.content
+
+                    # Normal text response
+                    if isinstance(content, str):
+                        if content:
+                            yield content
+
+                    # Handle structured content blocks
+                    elif isinstance(content, list):
+
+                        for block in content:
+
+                            if isinstance(block, dict):
+
+                                # Only allow text blocks
+                                if block.get("type") == "text":
+                                    text = block.get("text", "")
+
+                                    if text:
+                                        yield text
+
+            # Stream response
+            ai_message = st.write_stream(stream_ai_response())
+
+            # -------------------------------------------------------------
+            # Finished
+            # -------------------------------------------------------------
+            status.update(
+                label="✅ Completed",
+                state="complete",
+                expanded=False
             )
-        )
-
 
     # -------------------------------------------------------------------------
     # Store assistant response in Streamlit session
